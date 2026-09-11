@@ -30,8 +30,8 @@ import {
   upsertStaff,
   upsertUser,
 } from "./db.js";
-import { historyToWorkbook, parseRosterWorkbook, rosterToWorkbook, shiftToWorkbook } from "./excel.js";
-import { hashPassword } from "./password.js";
+import { hashPassword, parseRosterWorkbook, rosterToWorkbook } from "@rotation/db";
+import { registerHistoryRoutes } from "./history.js";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -67,6 +67,7 @@ export function createApp() {
   );
 
   app.get("/api/health", (c) => c.json({ ok: true }));
+  registerHistoryRoutes(app);
 
   app.post("/api/auth/login", async (c) => {
     const body = await c.req.json<{ username?: string; password?: string }>();
@@ -643,16 +644,6 @@ export function createApp() {
     }
     replaceStaff(roster);
     return c.json({ added, updated, total: rows.length, roster });
-  });
-
-  app.get("/api/export/shift/:id", requireAuth, (c) => {
-    const shift = getShift(sid(c));
-    if (!shift) return c.json({ error: "Not found" }, 404);
-    return xlsx(shiftToWorkbook(shift, listCatalog()), `ED-Board-${shift.date}-${shift.side}.xlsx`);
-  });
-
-  app.get("/api/export/history", requireAuth, (c) => {
-    return xlsx(historyToWorkbook(listShifts(), listCatalog()), `ED-Full-History-${today()}.xlsx`);
   });
 
   app.get("/api/catalog", requireAuth, (c) => c.json({ catalog: listCatalog() }));

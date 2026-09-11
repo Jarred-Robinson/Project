@@ -20,6 +20,9 @@ importers:
       '@hono/node-server':
         specifier: ^1.14.4
         version: 1.19.17(hono@4.13.7)
+      '@rotation/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@rotation/engine':
         specifier: workspace:*
         version: link:../../packages/engine
@@ -48,9 +51,15 @@ importers:
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.7(@types/node@22.20.2)(jiti@1.21.7)(tsx@4.23.13)
 
   apps/cli:
     dependencies:
+      '@rotation/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@rotation/engine':
         specifier: workspace:*
         version: link:../../packages/engine
@@ -119,6 +128,31 @@ importers:
       vite:
         specifier: ^6.3.5
         version: 6.4.3(@types/node@22.20.2)(jiti@1.21.7)(tsx@4.23.13)
+
+  packages/db:
+    dependencies:
+      '@rotation/shared':
+        specifier: workspace:*
+        version: link:../shared
+      better-sqlite3:
+        specifier: ^11.10.0
+        version: 11.10.0
+      xlsx:
+        specifier: ^0.18.5
+        version: 0.18.5
+    devDependencies:
+      '@types/better-sqlite3':
+        specifier: ^7.6.13
+        version: 7.6.13
+      '@types/node':
+        specifier: ^22.15.21
+        version: 22.20.2
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.7(@types/node@22.20.2)(jiti@1.21.7)(tsx@4.23.13)
 
   packages/engine:
     dependencies:

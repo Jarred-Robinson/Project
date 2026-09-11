@@ -6,13 +6,16 @@ import { runEngine } from "@rotation/engine";
 import {
   getConfig,
   getDb,
+  historyToWorkbook,
   listCatalog,
   listShifts,
   listStaff,
+  parseCsvRoster,
+  parseRosterWorkbook,
   replaceStaff,
   REPO_ROOT,
   upsertShift,
-} from "../../api/src/db.js";
+} from "@rotation/db";
 
 function resolveInput(file: string) {
   const fromCwd = resolve(process.cwd(), file);
@@ -21,12 +24,11 @@ function resolveInput(file: string) {
   if (existsSync(fromRoot)) return fromRoot;
   return fromCwd;
 }
-import { historyToWorkbook, parseCsvRoster, parseRosterWorkbook } from "../../api/src/excel.js";
 
 getDb();
 
 const program = new Command();
-program.name("rotation").description("ED Assignment Rotation Engine CLI").version("1.0.0");
+program.name("rotation").description("ED Assignment Rotation Engine CLI").version("5.0.0");
 
 program
   .command("generate")

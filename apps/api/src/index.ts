@@ -1,8 +1,9 @@
 import { serve } from "@hono/node-server";
 import { createApp } from "./app.js";
-import { DB_PATH, getDb } from "./db.js";
+import { seed } from "./seed.js";
+import { DB_PATH } from "./db.js";
 
-getDb();
+seed();
 const app = createApp();
 const port = Number(process.env.PORT || 3001);
 

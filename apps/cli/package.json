@@ -1,6 +1,6 @@
 {
   "name": "@rotation/cli",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "type": "module",
   "bin": {
     "rotation": "./src/index.ts"
@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@rotation/db": "workspace:*",
     "@rotation/engine": "workspace:*",
     "@rotation/shared": "workspace:*",
     "better-sqlite3": "^11.10.0",

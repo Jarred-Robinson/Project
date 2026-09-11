@@ -2,33 +2,38 @@
 
 ED Assignment Rotation Engine — a TypeScript monorepo for generating and running day/night emergency-department assignment boards.
 
-This repository previously contained only a LICENSE and stub README. The production rebuild that lived on Cursor Origin (`jarred-robinson/tmp-c38009296c74834f`, agent `bc-c4468944`) was **not readable from this environment**, so this port **reconstructs** that stack and behavior from:
+GitHub repo name stays **Project**; this README is the product display name (`rotation-engine@5.0.0`).
 
-1. The Rotation Engine v5 single-file ops board (`Rotation Engine v5 - ED Shift Ops Board`) — catalog, 143-name August 2026 RN roster, engine precedence, BOARDER/COMBINE, EOD, compliance recheck, and Excel shapes
-2. The port specification in the GitHub issue (Vite + React + Tailwind, Hono + better-sqlite3, Commander CLI, `packages/engine` + Vitest, HttpOnly session auth)
+The production rebuild on Cursor Origin (`jarred-robinson/tmp-c38009296c74834f`, agent `bc-c4468944`, commit `912aa8d`) was **not cloneable** from this environment (no GitHub remote, no Origin credentials). This port reconstructs that **package graph and behavior** from:
 
-GitHub repo name stays **Project**; this README is the product display name.
+1. Origin’s published file list (81 tracked files, `pnpm@10.33.3`)
+2. The Rotation Engine v5 single-file ops board — catalog, 143-name August 2026 RN roster, engine precedence, BOARDER/COMBINE, EOD, compliance recheck, Excel shapes
+3. The GitHub issue specification (Vite + React + Tailwind, Hono + better-sqlite3, Commander CLI, HttpOnly session auth)
 
 ## Layout
 
 | Path | Role |
 | --- | --- |
-| `apps/web` | Vite + React + TypeScript ops UI (Tailwind) |
-| `apps/api` | Hono + better-sqlite3 API |
+| `apps/web` | Vite + React + TypeScript ops UI (Tailwind). Pages: Login, Dashboard, Generate, Current Shift, Archive, Closeout, Roster, Catalog, Config, Users |
+| `apps/api` | Hono + SQLite API, HttpOnly `re_session` cookie, admin vs charge-nurse |
 | `apps/cli` | Commander CLI |
 | `packages/engine` | Pure TypeScript rotation engine + Vitest tests |
-| `packages/shared` | Shared types, constants, catalog + roster seed |
+| `packages/db` | better-sqlite3 store + Excel import/export |
+| `packages/shared` | Shared types, catalog, roster seed, demo auth helpers |
+| `prototype/` | v5 phase notes + partial HTML (no full `app.html`); v2 JSX stub |
+| `samples/roster.csv` | 143-name seed roster for CLI import |
 
 `pnpm dev` runs API + web together. SQLite lives at `data/rotation.db` (gitignored) and is seeded on first run.
 
 ## Setup
 
-Requires Node 20+ and [pnpm](https://pnpm.io/).
+Requires Node 20+ and [pnpm](https://pnpm.io/) 10.33.3.
 
 ```bash
 pnpm install
-pnpm test          # engine tests
+pnpm test          # engine + db + api tests
 pnpm dev           # API :3001 + web :5173
+pnpm seed          # (re)create SQLite seed if needed
 ```
 
 Then open http://localhost:5173.
@@ -37,7 +42,7 @@ Then open http://localhost:5173.
 
 | Username | Password | Role |
 | --- | --- | --- |
-| `admin` | `rotation` | Administrator (catalog, config, users, roster writes) |
+| `admin` | `rotation` | Administrator (catalog, config, users, roster writes, reset) |
 | `charge` | `rotation` | Charge nurse (generate board, current shift, EOD, roster read, Excel) |
 
 Sessions are HttpOnly cookies. Protected routes return **401** when unsigned-in and **403** when a charge-nurse hits admin-only APIs.
@@ -70,12 +75,24 @@ pnpm cli roster import ./samples/roster.csv
 pnpm cli export history --out ./rotation-history.xlsx
 ```
 
+## Scripts
+
+| Script | What it does |
+| --- | --- |
+| `pnpm dev` | API + web together |
+| `pnpm dev:api` / `pnpm dev:web` | One process |
+| `pnpm test` | Engine, db, and API Vitest suites |
+| `pnpm seed` | Ensure `data/rotation.db` exists and is seeded |
+| `pnpm cli …` | Commander CLI |
+| `pnpm lint` | Workspace TypeScript `--noEmit` |
+
 ## What was copied vs reconstructed
 
 | Source | Status |
 | --- | --- |
-| Origin git tree `tmp-c38009296c74834f` | Inaccessible (no clone / agent transcript) |
-| Rotation Engine v5 HTML/JSX ops board | **Copied in spirit**: catalog, roster names, `runEngine` / `computeDeficiencies` / `eligible` / month window, Excel sheet shapes |
-| TypeScript monorepo, Hono API, HttpOnly auth, CLI, Vitest | **Reconstructed** to match the specified Origin layout |
+| Origin git tree `tmp-c38009296c74834f` @ `912aa8d` | **Inaccessible** (agent `bc-c4468944` could not push; this environment cannot download that archive) |
+| Origin package graph | **Reconstructed** to match: `apps/{web,api,cli}`, `packages/{engine,shared,db}`, `prototype/`, root scripts |
+| Rotation Engine v5 HTML/JSX ops board | **Copied in spirit**: catalog, roster names, `runEngine` / deficiencies / eligible / month window, Excel sheet shapes |
+| Hono API, HttpOnly auth, CLI, Vitest | **Reconstructed** to Origin behavior |
 
 MIT License (see `LICENSE`).
