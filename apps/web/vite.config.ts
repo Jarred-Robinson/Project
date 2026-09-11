@@ -7,6 +7,7 @@ export default defineConfig({
     exclude: ["@rotation/shared", "@rotation/engine"],
   },
   server: {
+    host: "127.0.0.1",
     port: 5173,
     fs: { allow: ["../.."] },
     proxy: {
