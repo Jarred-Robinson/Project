@@ -1,0 +1,20 @@
+{
+  "name": "Rotation Engine",
+  "install": "pnpm install --frozen-lockfile && pnpm seed",
+  "terminals": [
+    {
+      "name": "api",
+      "command": "pnpm dev:api",
+      "description": "Hono + SQLite API on http://localhost:3001 (seeds data/rotation.db on startup)."
+    },
+    {
+      "name": "web",
+      "command": "pnpm dev:web",
+      "description": "Vite + React ops UI on http://localhost:5173 (proxies /api to the API on :3001)."
+    }
+  ],
+  "ports": [
+    { "name": "api", "port": 3001 },
+    { "name": "web", "port": 5173 }
+  ]
+}
