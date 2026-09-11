@@ -1016,8 +1016,49 @@ function ShiftDetail({
               <span className="text-xs font-mono">{e.start}</span>
               <span className="text-sm font-mono" style={{ color: isRel ? C.amber : C.teal }}>{isRel ? "⌀ RELEASED" : `${e.assignment_name}${e.partial ? " (P)" : ""}`}</span>
               {e.held && <Chip bg={C.redSoft} fg={C.red}>HELD</Chip>}
+              {e.boarder && <Chip bg={C.amberSoft} fg={C.amber}>BOARDER</Chip>}
               <div className="ml-auto flex gap-1.5 flex-wrap">
                 <Toggle on={!!e.held} tone="red" onLabel="HELD ✓" offLabel="HOLD" onClick={async () => replaceShift((await api.toggleHold(shift.id, e.staff_id)).shift)} />
+                {(e.category || "").startsWith("Gold") && (
+                  <Toggle
+                    on={!!e.boarder}
+                    tone="amber"
+                    onLabel="BOARDER ✓"
+                    offLabel="BOARDER"
+                    onClick={async () => {
+                      if (e.boarder) replaceShift((await api.patchEntry(shift.id, e.staff_id, { boarder: false, boarderComment: "" })).shift);
+                      else {
+                        const comment = prompt("Boarder comment (required)") || "";
+                        if (comment.trim()) replaceShift((await api.patchEntry(shift.id, e.staff_id, { boarder: true, boarderComment: comment })).shift);
+                      }
+                    }}
+                  />
+                )}
+                <Toggle
+                  on={!!e.runtimeCombinedWith}
+                  tone="teal"
+                  onLabel="COMBINED ✓"
+                  offLabel="COMBINE"
+                  onClick={async () => {
+                    if (e.runtimeCombinedWith) {
+                      replaceShift((await api.patchEntry(shift.id, e.staff_id, { runtimeCombinedWith: null, runtimeCombineComment: "", runtimeCombinedName: null })).shift);
+                      return;
+                    }
+                    const partner = prompt("Partner staff id or name") || "";
+                    const comment = prompt("Combine comment (required)") || "";
+                    const other = shift.entries.find((x) => x.staff_id === partner || x.staff_name.toLowerCase().includes(partner.toLowerCase()));
+                    if (!other || !comment.trim()) return;
+                    replaceShift(
+                      (
+                        await api.patchEntry(shift.id, e.staff_id, {
+                          runtimeCombinedWith: other.staff_id,
+                          runtimeCombineComment: comment,
+                          runtimeCombinedName: other.assignment_name,
+                        })
+                      ).shift,
+                    );
+                  }}
+                />
                 <button className="text-xs font-mono px-2 py-1 rounded" style={{ background: isRel ? C.amber : C.slate, color: isRel ? "#fff" : C.sub }} onClick={() => setReleased({ ...released, [e.staff_id]: !isRel })}>
                   {isRel ? "CANCEL RELEASE" : "RELEASE"}
                 </button>

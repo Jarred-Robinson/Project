@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { Command } from "commander";
 import { DEFAULT_CONFIG, seedCatalog, seedRoster, type ShiftSide } from "@rotation/shared";
@@ -10,8 +10,17 @@ import {
   listShifts,
   listStaff,
   replaceStaff,
+  REPO_ROOT,
   upsertShift,
 } from "../../api/src/db.js";
+
+function resolveInput(file: string) {
+  const fromCwd = resolve(process.cwd(), file);
+  if (existsSync(fromCwd)) return fromCwd;
+  const fromRoot = resolve(REPO_ROOT, file);
+  if (existsSync(fromRoot)) return fromRoot;
+  return fromCwd;
+}
 import { historyToWorkbook, parseCsvRoster, parseRosterWorkbook } from "../../api/src/excel.js";
 
 getDb();
@@ -84,7 +93,7 @@ program
   .command("import")
   .argument("<file>", "CSV or XLSX roster export")
   .action((file: string) => {
-    const abs = resolve(process.cwd(), file);
+    const abs = resolveInput(file);
     const buf = readFileSync(abs);
     const rows = file.endsWith(".csv")
       ? parseCsvRoster(buf.toString("utf8"))
