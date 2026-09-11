@@ -1,0 +1,140 @@
+import type { Assignment, Competency, LoadLevel, Role, TechSpecialty } from "./types.js";
+
+function n(
+  id: string,
+  name: string,
+  cat: string,
+  load: LoadLevel,
+  minC: Competency,
+  crit: boolean,
+): Assignment {
+  return {
+    id,
+    name,
+    category: cat,
+    load_level: load,
+    min_competency: minC,
+    roles: ["nurse"],
+    tech_specialty: null,
+    critical: crit,
+    special: false,
+    non_repeatable: false,
+    closeable: true,
+  };
+}
+
+function t(
+  id: string,
+  name: string,
+  cat: string,
+  load: LoadLevel,
+  minC: Competency,
+  spec: TechSpecialty,
+): Assignment {
+  return {
+    id,
+    name,
+    category: cat,
+    load_level: load,
+    min_competency: minC,
+    roles: ["tech"],
+    tech_specialty: spec,
+    critical: false,
+    special: false,
+    non_repeatable: false,
+    closeable: true,
+  };
+}
+
+function nt(
+  id: string,
+  name: string,
+  cat: string,
+  load: LoadLevel,
+  minC: Competency,
+  crit: boolean,
+): Assignment {
+  return {
+    id,
+    name,
+    category: cat,
+    load_level: load,
+    min_competency: minC,
+    roles: ["nurse", "tech"] as Role[],
+    tech_specialty: "both",
+    critical: crit,
+    special: false,
+    non_repeatable: false,
+    closeable: true,
+  };
+}
+
+/** Assignment catalog from Rotation Engine v5 (ED Shift Ops Board). */
+export function seedCatalog(): Assignment[] {
+  return [
+    n("RTS", "RTS", "Flow", "medium", "proficient", true),
+    n("PIT", "PIT", "Flow", "medium", "proficient", true),
+    n("G1", "4 Bed Gold B 1", "Gold", "medium", "trained", true),
+    n("G2", "4 Bed Gold B 2", "Gold", "medium", "trained", true),
+    n("G3", "4 Bed Gold 3", "Gold", "medium", "trained", true),
+    n("G4", "4 Bed Gold B 4", "Gold", "medium", "trained", true),
+    n("GA1", "4 Bed Gold A 1", "Gold A", "heavy", "trained", true),
+    n("GA2", "4 Bed Gold A 2", "Gold A", "heavy", "trained", true),
+    n("GA3", "4 Bed Gold A 3", "Gold A", "medium", "trained", true),
+    n("GB1", "4 Bed Green B 1", "Green B", "medium", "trained", true),
+    n("GB2", "4 Bed Green B 2", "Green B", "medium", "trained", true),
+    n("GB3", "3 Bed Green B 1", "Green B", "light", "trained", true),
+    n("GB4", "3 Bed Green B 2", "Green B", "light", "trained", true),
+    n("GN1", "3 Bed Green A 1", "Green A", "light", "trained", true),
+    n("GN2", "3 Bed Green A 2", "Green A", "light", "trained", true),
+    n("GN3", "3 Bed Green A 3", "Green A", "light", "trained", true),
+    n("GN4", "4 Bed Green A 1", "Green A", "medium", "trained", true),
+    n("GN5", "4 Bed Green A 2", "Green A", "medium", "trained", true),
+    nt("OBS", "Observation", "Observation", "light", "trained", true),
+    n("TR1", "Triage 1", "Triage", "medium", "proficient", true),
+    n("TR2", "Triage 2", "Triage", "medium", "proficient", true),
+    n("TR3", "Triage 3", "Triage", "medium", "proficient", true),
+    n("PFC", "PFC", "Flow", "medium", "proficient", true),
+    n("BB1", "B-Bed", "B-Bed", "light", "trained", true),
+    n("TA1", "Trauma 1", "Trauma", "heavy", "proficient", true),
+    n("TA2", "Trauma 2", "Trauma", "heavy", "proficient", true),
+    t("TG1", "Tech Green 1", "Tech Zone", "light", "trained", "general"),
+    t("TG2", "Tech Green 2", "Tech Zone", "light", "trained", "general"),
+    t("TG3", "Tech Green 3", "Tech Zone", "light", "trained", "general"),
+    t("TGL1", "Tech Gold 1", "Tech Zone", "medium", "trained", "general"),
+    t("TGL2", "Tech Gold 2", "Tech Zone", "medium", "trained", "general"),
+    t("HUC1", "HUC 1", "HUC", "light", "trained", "huc"),
+    t("HUC2", "HUC 2", "HUC", "light", "trained", "huc"),
+    t("EKG1", "EKG Tech", "Tech Zone", "light", "trained", "ekg"),
+    t("SIT1", "Sitter", "Tech Zone", "light", "trained", "sitter"),
+    t("TRT1", "Triage Tech", "Tech Zone", "medium", "trained", "triage"),
+    t("OBST1", "Obs Sitter", "Observation", "light", "trained", "obs_sitter"),
+    t("EDT1", "EDT", "Tech Zone", "medium", "trained", "edt"),
+    {
+      id: "PMD1",
+      name: "Paramedic",
+      category: "Flow",
+      load_level: "medium",
+      min_competency: "trained",
+      roles: ["paramedic"],
+      tech_specialty: null,
+      critical: false,
+      special: false,
+      non_repeatable: false,
+      closeable: true,
+    },
+    {
+      id: "SP1",
+      name: "Break Relief",
+      category: "Special",
+      load_level: "light",
+      min_competency: "untrained",
+      roles: ["nurse", "tech"],
+      tech_specialty: "both",
+      critical: false,
+      special: true,
+      non_repeatable: false,
+      closeable: false,
+    },
+  ];
+}

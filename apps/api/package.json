@@ -1,0 +1,27 @@
+{
+  "name": "@rotation/api",
+  "version": "5.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.4",
+    "@rotation/db": "workspace:*",
+    "@rotation/engine": "workspace:*",
+    "@rotation/shared": "workspace:*",
+    "better-sqlite3": "^11.10.0",
+    "hono": "^4.7.11",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.15.21",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

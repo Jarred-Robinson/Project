@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Rotation Engine v4 — ED Shift Operations Board</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7/babel.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" crossorigin></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  html,body,#root{height:100%;margin:0;}
+  #boot{font-family:ui-monospace,Menlo,monospace;padding:2rem;color:#566570;background:#F0F2F1;height:100%;}
+  #boot .err{color:#963529;}
+</style>
+</head>
+<body>
+<div id="root"><div id="boot">Loading Rotation Engine…<br/><br/>
+<span style="font-size:.85em">If this message persists, the page needs internet access on first load to fetch React, SheetJS and Tailwind from CDN.</span></div></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo } = React;
+
+/* ============================================================
+   ROTATION ENGINE v4 — ED Shift Operations Board
+   – Roster populated from 2026 RN ROTATION.xlsx (August sheet)
+   – Global search + employee search during board creation
+   – Mid-shift redistribution with per-staff release toggle
+   – Excel (.xlsx) export for external tracking
+   – Local/shared storage (Supabase removed for now)
+   ============================================================ */
+
+const C = {
+  bg:"#F0F2F1", panel:"#FFFFFF", ink:"#14202A", sub:"#566570",
+  line:"#D6DCDB", teal:"#0C4F54", tealMid:"#1A7A82", tealSoft:"#DFF0F1",
+  amber:"#A06B00", amberSoft:"#F5EDDA", red:"#963529", redSoft:"#F2E0DC",
+  green:"#346644", greenSoft:"#DFF0E5", slate:"#E5E9E8",
+  /* §18: a few new tasteful, muted hues added alongside the existing palette so every
+     zone/category gets a visually distinct accent without going neon. */
+  plum:"#6B4162", rose:"#8C4A56", ochre:"#8A6A1E", steel:"#3C5A73", moss:"#5B6E3A", clay:"#7A5138",
+};
+
+/* §18: zone/category color visualization — keyed by the entry's `category` field
+   (NOT the assignment name, since some assignments still literally say "Gold B" only
+   in their name while their `category` is just "Gold"/"Gold A"). Used as a left-border
+   accent + small dot/chip on the Generated Board preview and Current Shift entry list. */
+const ZONE_COLORS = {
+  "Gold":       C.amber,
+  "Gold A":     C.ochre,
+  "Green A":    C.green,
+  "Green B":    C.moss,
+  "Flow":       C.teal,
+  "Triage":     C.tealMid,
+  "Trauma":     C.red,
+  "Observation":C.steel,
+  "Tech Zone":  C.plum,
+  "HUC":        C.clay,
+  "Special":    C.sub,
+  "B-Bed":      C.rose,
+};
+function zoneColor(category){ return ZONE_COLORS[category]||C.line; }
+/* Hoisted to module scope (was previously a RotationEngineV4-local const) so it's usable
+   from CurrentShiftEntries' §13 mid-shift CLOSE ASSIGNMENTS control too. */
+const match=(txt,q)=>!q||String(txt||"").toLowerCase().includes(q.toLowerCase());
+/* Small legend strip for panels that render zone-colored rows. */
+function ZoneLegend(){
+  return <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-mono mt-2 pt-2 border-t" style={{color:C.sub,borderColor:C.line}}>
+    {Object.entries(ZONE_COLORS).map(([cat,col])=>
+      <span key={cat} className="flex items-center gap-1">
+        <span style={{display:"inline-block",width:8,height:8,borderRadius:9999,background:col}}/>{cat}
+      </span>)}
+  </div>;
+}
+
+const START_TIMES = ["03:00","05:00","07:00","09:00","11:00","15:00","17:00","19:00","21:00"];
+const COMP_RANK = { untrained:0, trained:1, proficient:2 };
+const LOAD_PTS  = { light:1, medium:2, heavy:3 };
+const WILDCARD  = "WILDCARD";
+const TECH_SPECIALTIES = ["general","huc","both","ekg","sitter","triage","obs_sitter","edt"];
+const ROLES = ["nurse","tech","paramedic"];
+<!-- Origin handoff: full app.html omitted. Engine/UI reconstructed in packages/engine + apps/web. -->
