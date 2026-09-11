@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.display {
+  font-family: "Saira Semi Condensed", sans-serif;
+}
+.font-mono {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+body,
+* {
+  font-family: Inter, system-ui, sans-serif;
+}
+input:focus,
+select:focus,
+button:focus {
+  outline: 2px solid #0c4f54;
+  outline-offset: 1px;
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

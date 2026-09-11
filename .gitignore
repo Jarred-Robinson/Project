@@ -1,0 +1,16 @@
+node_modules
+dist
+build
+.turbo
+.cache
+*.log
+.DS_Store
+data/*.db
+data/*.db-*
+data/*.sqlite
+*.xlsx
+!samples/**
+.env
+.env.local
+.vite
+coverage
